@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Room | StageManager</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+      .root {
+        max-width: 720px;
+      }
+    </style>
+  </head>
+  <body class="d-flex justify-content-center">
+    <div class="root">
+      <nav class="navbar border-bottom border-body">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#"> StageManager </a>
+        </div>
+      </nav>
+      <main class="mt-5">
+        <div class="card" style="width: 20rem">
+          <div
+            class="bg-dark text-white d-flex justify-content-center align-itens-center py-5"
+          >
+            <h1 id="timer-text">00:00</h1>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">
+              Some quick example text to build on the card title and make up the
+              bulk of the card’s content.
+            </p>
+
+            <div class="d-flex flex-column gap-2">
+              <div class="d-flex gap-1">
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  style="flex: 1"
+                  onclick="increaseTime(1)"
+                >
+                  + 1 min
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  style="flex: 1"
+                  onclick="increaseTime(5)"
+                >
+                  + 5 min
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  style="flex: 1"
+                  onclick="increaseTime(10)"
+                >
+                  + 10 min
+                </button>
+              </div>
+              <div class="d-flex gap-1">
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  style="flex: 1"
+                  onclick="decreaseTime(1)"
+                >
+                  - 1 min
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  style="flex: 1"
+                  onclick="decreaseTime(5)"
+                >
+                  - 5 min
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  style="flex: 1"
+                  onclick="decreaseTime(10)"
+                >
+                  - 10 min
+                </button>
+              </div>
+              <div class="d-flex flex-column gap-1">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  style="flex: 1"
+                  onclick="changeTimerStatus('play')"
+                >
+                  <i class="bi bi-play-fill"></i>
+                  Play
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  style="flex: 1"
+                  onclick="changeTimerStatus('pause')"
+                >
+                  <i class="bi bi-pause-fill"></i>
+                  Pause
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  style="flex: 1"
+                  onclick="changeTimerStatus('stop')"
+                >
+                  <i class="bi bi-stop-fill"></i>
+                  Stop
+                </button>
+                <a
+                  href="#"
+                  id="timer-display-btn"
+                  class="btn btn-info"
+                  target="_blank"
+                  title="Display timer"
+                >
+                  <i class="bi bi-clock-history"></i>
+                  Timer Display
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="../js/room.js"></script>
+    <script>
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const TOKEN = urlParams.get("t");
+
+      console.log(TOKEN);
+
+      async function increaseTime(time) {
+        const room = await getRoomByToken(TOKEN);
+
+        if (!room || room.error) {
+          alert("Something went wrong. Returning....");
+          return false;
+        }
+
+        const amount = time * 60; // Time in seconds
+
+        try {
+          const response = await axios.put(
+            "http://192.168.1.105:3000/api/v1/rooms/" +
+              room._id +
+              "/timer/increase",
+            { amount }
+          );
+
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      async function decreaseTime(time) {
+        const room = await getRoomByToken(TOKEN);
+
+        if (!room || room.error) {
+          alert("Something went wrong. Returning....");
+          return false;
+        }
+
+        const amount = time * 60; // Time in seconds
+
+        try {
+          const response = await axios.put(
+            "http://192.168.1.105:3000/api/v1/rooms/" +
+              room._id +
+              "/timer/decrease",
+            { amount }
+          );
+
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      async function changeTimerStatus(status) {
+        const room = await getRoomByToken(TOKEN);
+
+        console.log(room);
+        console.log(status);
+
+        if (!room || room.error) {
+          alert("Something went wrong. Returning....");
+          return false;
+        }
+
+        try {
+          const response = await axios.put(
+            "http://192.168.1.105:3000/api/v1/rooms/" +
+              room._id +
+              "/timer/status",
+            { status }
+          );
+
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      async function renderRoomInfos(token) {
+        const room = await getRoomByToken(token);
+
+        if (!room || room.error) {
+          alert("Something went wrong. Returning....");
+          window.history.back();
+        }
+
+        document.querySelector(".card-title").innerHTML = room.title;
+        document.querySelector(".card-text").innerHTML = room.description;
+
+        document
+          .querySelector("#timer-display-btn")
+          .setAttribute("href", "../t/?t=" + token);
+      }
+
+      renderRoomInfos(TOKEN);
+
+      async function updateUIHandler(token) {
+        const room = await getRoomByToken(token);
+
+        if (!room || room.error) {
+          console("Something went wrong. Trying again....");
+        }
+
+        const el = document.querySelector("#timer-text");
+
+        updateTimer(room, el);
+
+        setTimeout(() => {
+          updateUIHandler(token);
+        }, 1000);
+      }
+
+      updateUIHandler(TOKEN);
+    </script>
+  </body>
+</html>
