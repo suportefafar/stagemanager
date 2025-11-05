@@ -165,7 +165,7 @@
 
         try {
           const response = await axios.put(
-            "http://192.168.1.105:3000/api/v1/rooms/" +
+            "https://stagemanager.farmacia.ufmg.br/backend/api/v1/rooms/" +
               room._id +
               "/timer/increase",
             { amount }
@@ -189,7 +189,7 @@
 
         try {
           const response = await axios.put(
-            "http://192.168.1.105:3000/api/v1/rooms/" +
+            "https://stagemanager.farmacia.ufmg.br/backend/api/v1/rooms/" +
               room._id +
               "/timer/decrease",
             { amount }
@@ -214,7 +214,7 @@
 
         try {
           const response = await axios.put(
-            "http://192.168.1.105:3000/api/v1/rooms/" +
+            "https://stagemanager.farmacia.ufmg.br/backend/api/v1/rooms/" +
               room._id +
               "/timer/status",
             { status }

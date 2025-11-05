@@ -25,7 +25,7 @@ import config from "./config.js";
 try {
   mongoose.connect(config.mongoDbUri + "?retryWrites=true&w=majority");
 } catch (error) {
-  console.log("Could not connect to DB");
+  LOGGER.error("Could not connect to DB");
 }
 
 async function countDown(room) {

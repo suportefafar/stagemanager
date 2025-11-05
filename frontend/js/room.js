@@ -5,7 +5,8 @@ async function getRoomByToken(token) {
 
   try {
     const response = await axios.get(
-      "http://192.168.1.105:3000/api/v1/rooms/token/" + token
+      "https://stagemanager.farmacia.ufmg.br/backend/api/v1/rooms/token/" +
+        token
     );
 
     console.log(response);
