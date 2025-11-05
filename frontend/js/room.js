@@ -5,8 +5,7 @@ async function getRoomByToken(token) {
 
   try {
     const response = await axios.get(
-      "https://stagemanager.farmacia.ufmg.br/backend/api/v1/rooms/token/" +
-        token
+      "https://stagemanager.farmacia.ufmg.br/api/v1/rooms/token/" + token
     );
 
     console.log(response);
