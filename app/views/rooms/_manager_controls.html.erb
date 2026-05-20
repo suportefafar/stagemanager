@@ -1,0 +1,37 @@
+<div id="manager_controls">
+  <div class="btn-group w-100 mb-3 gap-2" role="group">
+    <%= button_to update_timer_room_path(room.passcode, action_type: 'start'), method: :patch, class: "btn btn-success", disabled: room.timer_status == 'playing' do %>
+      <i class="bi bi-play-fill"></i> Start
+    <% end %>
+
+    <%= button_to update_timer_room_path(room.passcode, action_type: 'pause'), method: :patch, class: "btn btn-warning", disabled: room.timer_status != 'playing' do %>
+      <i class="bi bi-pause-fill"></i> Pause
+    <% end %>
+
+    <%= button_to update_timer_room_path(room.passcode, action_type: 'stop'), method: :patch, class: "btn btn-danger", data: { turbo_confirm: "Stop and reset timer?" } do %>
+      <i class="bi bi-stop-fill"></i> Stop/Reset
+    <% end %>
+  </div>
+
+  <div class="btn-group w-100 gap-2 flex-wrap" role="group">
+    <%= button_to update_timer_room_path(room.passcode, action_type: 'sub', amount: 600), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
+      - 10
+    <% end %>
+    <%= button_to update_timer_room_path(room.passcode, action_type: 'sub', amount: 300), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
+      - 5
+    <% end %>
+    <%= button_to update_timer_room_path(room.passcode, action_type: 'sub', amount: 60), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
+      - 1 Min
+    <% end %>
+
+    <%= button_to update_timer_room_path(room.passcode, action_type: 'add', amount: 60), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
+      + 1 Min
+    <% end %>
+    <%= button_to update_timer_room_path(room.passcode, action_type: 'add', amount: 300), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
+      + 5
+    <% end %>
+    <%= button_to update_timer_room_path(room.passcode, action_type: 'add', amount: 600), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
+      + 10
+    <% end %>
+  </div>
+</div>

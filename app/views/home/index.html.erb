@@ -1,0 +1,13 @@
+<main class="container mt-5" style="max-width: 720px;">
+  <div class="card shadow-sm">
+    <div class="card-body p-4">
+      <h2 class="card-title">Room Passcode</h2>
+      <p class="text-secondary">Insert the passcode of the room to manage or view it. If it doesn't exist, it will be created.</p>
+
+      <%= form_with url: rooms_path, method: :post, class: "input-group mt-3", local: true do |f| %>
+        <%= f.text_field :passcode, class: "form-control form-control-lg", placeholder: "Enter passcode", required: true %>
+        <%= f.submit "Enter Room", class: "btn btn-primary btn-lg" %>
+      <% end %>
+    </div>
+  </div>
+</main>

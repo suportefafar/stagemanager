@@ -1,0 +1,54 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Room: <%= @room.passcode %></h2>
+    <div>
+      <%= link_to "Launch Timer Screen", timer_room_path(@room.passcode), target: "_blank", class: "btn btn-outline-dark" %>
+      <%= link_to "Launch Presentation", presentation_room_path(@room.passcode), target: "_blank", class: "btn btn-outline-info" %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Timer Controls</h5>
+        </div>
+        <div class="card-body text-center">
+          <%= turbo_stream_from "room_#{@room.id}_timer" %>
+
+          <div class="mb-4 bg-light rounded p-4" style="height: 150px; position: relative; overflow: hidden;">
+            <%= render "rooms/timer_display", room: @room %>
+          </div>
+
+          <%= render "rooms/manager_controls", room: @room %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">Carousel Message</h5>
+        </div>
+        <div class="card-body">
+          <%= turbo_stream_from "room_#{@room.id}_message" %>
+          <%= form_with url: update_message_room_path(@room.passcode), method: :patch, class: "d-flex flex-column" do |f| %>
+            <div class="mb-3">
+              <%= f.text_area :message, value: @room.message, class: "form-control", rows: 3, placeholder: "Type a message to scroll across the screen..." %>
+            </div>
+            <%= f.submit "Update Message", class: "btn btn-primary" %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">Presentations & Media</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Presentation functionality will be implemented in the next phase.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  passcode: MyString
+  timer_duration: 1
+  timer_remaining: 1
+  timer_status: MyString
+  message: MyString
+  current_slide: 1
+
+two:
+  passcode: MyString
+  timer_duration: 1
+  timer_remaining: 1
+  timer_status: MyString
+  message: MyString
+  current_slide: 1

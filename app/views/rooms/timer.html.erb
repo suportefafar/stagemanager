@@ -1,0 +1,39 @@
+<%= turbo_stream_from "room_#{@room.id}_timer" %>
+<%= turbo_stream_from "room_#{@room.id}_message" %>
+
+<div class="d-flex flex-column justify-content-center align-items-center h-100">
+  <%= render "rooms/timer_display", room: @room %>
+</div>
+
+<div class="fixed-bottom w-100">
+  <%= render "rooms/carousel_message", room: @room %>
+</div>
+
+<style>
+  .clock-text {
+    font-size: 35vw;
+    font-weight: bold;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .marquee-container {
+    width: 100%;
+    overflow: hidden;
+    background: rgba(0,0,0,0.8);
+    padding: 10px 0;
+    font-size: 17.5vw;
+    white-space: nowrap;
+  }
+  .marquee-content {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 15s linear infinite;
+  }
+  @keyframes marquee {
+    0%   { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
+  }
+  .progress {
+    border-radius: 0 !important;
+  }
+</style>
