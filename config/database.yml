@@ -1,16 +1,30 @@
 default: &default
-  adapter: sqlite3
+  adapter: postgresql
+  encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
+  host: <%= ENV.fetch("POSTGRES_HOST") { "localhost" } %>
+  port: <%= ENV.fetch("POSTGRES_PORT") { 5432 } %>
+  username: <%= ENV.fetch("POSTGRES_USER") { "user" } %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD") { "password" } %>
 
 development:
   <<: *default
-  database: storage/development.sqlite3
+  database: <%= ENV.fetch("STAGEMANAGER_DB_NAME") { "stagemanager_development" } %>
 
 test:
   <<: *default
-  database: storage/test.sqlite3
+  database: stagemanager_test
 
 production:
-  <<: *default
-  database: storage/production.sqlite3
+  primary: &production_db
+    <<: *default
+    database: <%= ENV.fetch("STAGEMANAGER_DB_NAME") { "stagemanager_production" } %>
+  cache:
+    <<: *production_db
+    database: <%= ENV.fetch("STAGEMANAGER_CACHE_DB_NAME") { ENV.fetch("STAGEMANAGER_DB_NAME", "stagemanager_production") + "_cache" } %>
+  queue:
+    <<: *production_db
+    database: <%= ENV.fetch("STAGEMANAGER_QUEUE_DB_NAME") { ENV.fetch("STAGEMANAGER_DB_NAME", "stagemanager_production") + "_queue" } %>
+  cable:
+    <<: *production_db
+    database: <%= ENV.fetch("STAGEMANAGER_CABLE_DB_NAME") { ENV.fetch("STAGEMANAGER_DB_NAME", "stagemanager_production") + "_cable" } %>
