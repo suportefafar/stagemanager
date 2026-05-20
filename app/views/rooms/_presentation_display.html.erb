@@ -1,0 +1,17 @@
+<div id="presentation_display" class="w-100 h-100 d-flex justify-content-center align-items-center">
+  <% current_asset = room.current_media_asset %>
+  <% if current_asset&.file&.attached? %>
+    <% if current_asset.image? %>
+      <%= image_tag url_for(current_asset.file),
+          style: "max-width: 100%; max-height: 100%; object-fit: contain;" %>
+    <% elsif current_asset.video? %>
+      <video src="<%= url_for(current_asset.file) %>" autoplay <%= 'loop' if current_asset.loop? %>
+        style="max-width: 100%; max-height: 100%; object-fit: contain;"></video>
+    <% end %>
+  <% else %>
+    <div class="text-secondary text-center">
+      <i class="bi bi-display" style="font-size: 5rem;"></i>
+      <h3 class="mt-3">No Presentation Active</h3>
+    </div>
+  <% end %>
+</div>

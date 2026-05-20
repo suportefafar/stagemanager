@@ -1,0 +1,218 @@
+<div id="media_panel">
+  <%# Row 1: Navigation/Preview and Upload aside %>
+  <div class="row mb-4">
+    <%# Navigation & Preview %>
+    <div class="col-md-8">
+      <h6 class="fw-bold mb-3"><i class="bi bi-easel"></i> Navigation & Preview</h6>
+      <% if room.total_slides > 0 %>
+        <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
+          <%= button_to update_slide_room_path(room.passcode, action_type: 'prev'),
+              method: :patch, class: "btn btn-outline-dark",
+              disabled: room.current_slide <= 1 do %>
+            <i class="bi bi-chevron-left"></i> Previous
+          <% end %>
+          <span class="fw-bold fs-5"><%= room.current_slide %> / <%= room.total_slides %></span>
+          <%= button_to update_slide_room_path(room.passcode, action_type: 'next'),
+              method: :patch, class: "btn btn-outline-dark",
+              disabled: room.current_slide >= room.total_slides do %>
+            Next <i class="bi bi-chevron-right"></i>
+          <% end %>
+        </div>
+
+        <%# Preview Frame %>
+        <div class="bg-black rounded overflow-hidden text-center mx-auto mb-3" style="aspect-ratio: 16/9; max-width: 100%; max-height: 320px;">
+          <% current_asset = room.current_media_asset %>
+          <% if current_asset&.file&.attached? && current_asset&.image? %>
+            <%= image_tag url_for(current_asset.file),
+                style: "width: 100%; height: 100%; object-fit: contain;",
+                class: "rounded" %>
+          <% elsif current_asset&.file&.attached? && current_asset&.video? %>
+            <video src="<%= url_for(current_asset.file) %>" muted autoplay loop
+              style="width: 100%; height: 100%; object-fit: contain;" class="rounded"></video>
+          <% else %>
+            <div class="d-flex align-items-center justify-content-center h-100 text-secondary">
+              <i class="bi bi-display" style="font-size: 2rem;"></i>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Now Playing Audio Indicator %>
+        <% if room.current_audio %>
+          <div class="mt-2 p-2 bg-success bg-opacity-10 border border-success border-opacity-25 rounded d-flex align-items-center gap-2 text-success small">
+            <i class="bi bi-music-note-beamed"></i>
+            <span>Now playing: <strong><%= room.current_audio.title.presence || room.current_audio.file.filename %></strong></span>
+            <%= button_to update_audio_room_path(room.passcode, action_type: 'stop'),
+                method: :patch, class: "btn btn-sm btn-outline-warning p-0 px-2 ms-auto" do %>
+              <i class="bi bi-stop-fill"></i> Stop Audio
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="text-center text-muted py-5 bg-light rounded">
+          <i class="bi bi-easel" style="font-size: 2.5rem;"></i>
+          <p class="mt-2 mb-0 small">Upload slides to activate navigation and preview</p>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Upload Section %>
+    <div class="col-md-4">
+      <h6 class="fw-bold mb-3"><i class="bi bi-cloud-upload"></i> Upload Media</h6>
+      <div class="card bg-light border-0 shadow-none">
+        <div class="card-body p-3">
+          <%= form_with url: room_media_assets_path(room.passcode), method: :post,
+              multipart: true, class: "mb-0" do |f| %>
+            <div class="mb-3">
+              <%= f.file_field :files, multiple: true, accept: "image/*,video/*,audio/*",
+                  class: "form-control", name: "media_asset[files][]" %>
+            </div>
+            <small class="text-muted d-block mb-3">
+              <i class="bi bi-info-circle"></i> Upload images/videos for slides, or audio files for background music.
+            </small>
+            <%= f.submit "Upload Files", class: "btn btn-info text-white w-100 fw-semibold" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <%# Row 2: Slides and Audios Lists %>
+  <div class="row">
+    <%# Slide List (images & videos only) %>
+    <div class="col-md-6 mb-4 mb-md-0">
+      <h6 class="fw-bold mb-3"><i class="bi bi-collection"></i> Slides (<%= room.total_slides %>)</h6>
+      <div class="slide-list border rounded p-2 bg-light bg-opacity-50" style="max-height: 350px; overflow-y: auto;">
+        <% room.media_assets.slides.each_with_index do |asset, index| %>
+          <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded slide-item bg-white shadow-sm border
+            <%= 'border-primary border-opacity-70 bg-primary bg-opacity-10' if index + 1 == room.current_slide %>">
+            <span class="badge bg-secondary"><%= index + 1 %></span>
+            
+            <% if asset.image? %>
+              <%= image_tag url_for(asset.file), class: "rounded border",
+                  style: "width: 48px; height: 36px; object-fit: cover;" %>
+            <% elsif asset.video? %>
+              <div class="bg-dark rounded d-flex align-items-center justify-content-center border"
+                   style="width: 48px; height: 36px;">
+                <i class="bi bi-camera-video text-info"></i>
+              </div>
+            <% end %>
+
+            <span class="text-truncate flex-grow-1 small slide-name-display fw-medium"
+                  onclick="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                  style="cursor: pointer;" title="Click to rename">
+              <%= asset.title.presence || asset.file.filename %>
+            </span>
+            <%= form_with url: room_media_asset_path(room.passcode, asset), method: :patch,
+                class: "flex-grow-1", style: "display: none;" do |f| %>
+              <%= f.text_field :title, value: asset.title.presence || asset.file.filename.to_s.sub(/\.[^.]+$/, ''),
+                  class: "form-control form-control-sm", name: "media_asset[title]",
+                  onblur: "this.closest('form').requestSubmit()",
+                  onkeydown: "if(event.key==='Enter'){event.preventDefault();this.closest('form').requestSubmit()}" %>
+            <% end %>
+
+            <div class="d-flex gap-1">
+              <% if asset.video? %>
+                <%= button_to room_media_asset_path(room.passcode, asset),
+                    method: :patch,
+                    params: { media_asset: { loop: !asset.loop } },
+                    class: "btn btn-sm #{asset.loop ? 'btn-info text-white' : 'btn-outline-secondary'} p-0 px-2",
+                    title: asset.loop ? "Disable repeat" : "Enable repeat" do %>
+                  <i class="bi bi-repeat"></i>
+                <% end %>
+              <% end %>
+              <%= button_to update_slide_room_path(room.passcode, action_type: 'goto', slide_number: index + 1),
+                  method: :patch, class: "btn btn-sm btn-outline-primary p-0 px-2",
+                  title: "Show this slide" do %>
+                <i class="bi bi-eye"></i> Show
+              <% end %>
+              <%= button_to room_media_asset_path(room.passcode, asset), method: :delete,
+                  class: "btn btn-sm btn-outline-danger p-0 px-2",
+                  data: { turbo_confirm: "Remove this slide?" },
+                  title: "Delete" do %>
+                <i class="bi bi-trash"></i>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+        <% if room.media_assets.slides.empty? %>
+          <div class="text-center text-muted py-4">
+            <i class="bi bi-image" style="font-size: 1.8rem;"></i>
+            <p class="mt-2 mb-0 small">No slides uploaded yet.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Audio List %>
+    <div class="col-md-6">
+      <% audios = room.media_assets.audios %>
+      <h6 class="fw-bold mb-3"><i class="bi bi-music-note-beamed"></i> Audio Tracklist (<%= audios.size %>)</h6>
+      <div class="audio-list border rounded p-2 bg-light bg-opacity-50" style="max-height: 350px; overflow-y: auto;">
+        <% audios.each do |asset| %>
+          <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded bg-white shadow-sm border
+            <%= 'border-success border-opacity-70 bg-success bg-opacity-10' if room.current_audio_id == asset.id %>">
+            <div class="bg-dark rounded d-flex align-items-center justify-content-center border"
+                 style="width: 36px; height: 36px;">
+              <i class="bi bi-music-note text-success"></i>
+            </div>
+
+            <span class="text-truncate flex-grow-1 small slide-name-display fw-medium"
+                  onclick="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                  style="cursor: pointer;" title="Click to rename">
+              <%= asset.title.presence || asset.file.filename %>
+            </span>
+            <%= form_with url: room_media_asset_path(room.passcode, asset), method: :patch,
+                class: "flex-grow-1", style: "display: none;" do |f| %>
+              <%= f.text_field :title, value: asset.title.presence || asset.file.filename.to_s.sub(/\.[^.]+$/, ''),
+                  class: "form-control form-control-sm", name: "media_asset[title]",
+                  onblur: "this.closest('form').requestSubmit()",
+                  onkeydown: "if(event.key==='Enter'){event.preventDefault();this.closest('form').requestSubmit()}" %>
+            <% end %>
+
+            <div class="d-flex gap-1">
+              <%= button_to room_media_asset_path(room.passcode, asset),
+                  method: :patch,
+                  params: { media_asset: { loop: !asset.loop } },
+                  class: "btn btn-sm #{asset.loop ? 'btn-info text-white' : 'btn-outline-secondary'} p-0 px-2",
+                  title: asset.loop ? "Disable repeat" : "Enable repeat" do %>
+                <i class="bi bi-repeat"></i>
+              <% end %>
+              <% if room.current_audio_id == asset.id %>
+                <%= button_to update_audio_room_path(room.passcode, action_type: 'stop'),
+                    method: :patch, class: "btn btn-sm btn-outline-warning p-0 px-2",
+                    title: "Stop audio" do %>
+                  <i class="bi bi-stop-fill"></i> Stop
+                <% end %>
+              <% else %>
+                <%
+                  confirm_msg = room.video_playing? ?
+                    "A video is currently playing on the presentation screen. Playing music will overlap with the video's audio. Continue?" : nil
+                %>
+                <%= button_to update_audio_room_path(room.passcode, action_type: 'play', audio_id: asset.id),
+                    method: :patch, class: "btn btn-sm btn-outline-success p-0 px-2",
+                    title: "Play audio",
+                    data: confirm_msg ? { turbo_confirm: confirm_msg } : {} do %>
+                  <i class="bi bi-play-fill"></i> Play
+                <% end %>
+              <% end %>
+              <%= button_to room_media_asset_path(room.passcode, asset), method: :delete,
+                  class: "btn btn-sm btn-outline-danger p-0 px-2",
+                  data: { turbo_confirm: "Remove this audio?" },
+                  title: "Delete" do %>
+                <i class="bi bi-trash"></i>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+        <% if audios.empty? %>
+          <div class="text-center text-muted py-4">
+            <i class="bi bi-music-note" style="font-size: 1.8rem;"></i>
+            <p class="mt-2 mb-0 small">No audio files uploaded yet.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,18 +1,7 @@
 <%= turbo_stream_from "room_#{@room.id}_presentation" %>
 
 <div class="h-100 d-flex flex-column justify-content-center align-items-center bg-black">
-  <div id="presentation_display" class="w-100 h-100 d-flex justify-content-center align-items-center">
-    <% if @room.presentations.where(status: 'ready').last %>
-      <div class="text-white text-center">
-        <h2>Presentation Mode</h2>
-        <p>Slide <%= @room.current_slide %> will render here.</p>
-        <p class="text-muted">PDF.js integration to be completed in the next phase.</p>
-      </div>
-    <% else %>
-      <div class="text-secondary">
-        <i class="bi bi-display" style="font-size: 5rem;"></i>
-        <h3 class="mt-3">No Presentation Active</h3>
-      </div>
-    <% end %>
-  </div>
+  <%= render "rooms/presentation_display", room: @room %>
 </div>
+
+<%= render "rooms/audio_player", room: @room %>

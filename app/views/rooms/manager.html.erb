@@ -40,13 +40,17 @@
           <% end %>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="card shadow-sm">
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm mb-4">
         <div class="card-header bg-info text-white">
-          <h5 class="mb-0">Presentations & Media</h5>
+          <h5 class="mb-0"><i class="bi bi-easel"></i> Presentations & Media</h5>
         </div>
         <div class="card-body">
-          <p class="text-muted">Presentation functionality will be implemented in the next phase.</p>
+          <%= render "rooms/media_panel", room: @room %>
         </div>
       </div>
     </div>

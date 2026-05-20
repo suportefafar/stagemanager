@@ -1,0 +1,6 @@
+<div id="audio_player">
+  <% audio_asset = room.current_audio %>
+  <% if audio_asset&.file&.attached? && audio_asset&.audio? %>
+    <audio src="<%= url_for(audio_asset.file) %>" autoplay <%= 'loop' if audio_asset.loop? %>></audio>
+  <% end %>
+</div>

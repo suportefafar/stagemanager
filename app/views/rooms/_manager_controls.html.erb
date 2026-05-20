@@ -13,7 +13,7 @@
     <% end %>
   </div>
 
-  <div class="btn-group w-100 gap-2 flex-wrap" role="group">
+  <div class="btn-group w-100 gap-2 flex-wrap mb-4" role="group">
     <%= button_to update_timer_room_path(room.passcode, action_type: 'sub', amount: 600), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
       - 10
     <% end %>
@@ -34,4 +34,17 @@
       + 10
     <% end %>
   </div>
+
+  <hr>
+  
+  <%= form_with url: update_timer_room_path(room.passcode, action_type: 'set_duration'), method: :patch, class: "d-flex align-items-center gap-2 mt-3" do |f| %>
+    <%= f.label :duration_str, "Default Timer:", class: "form-label mb-0 fw-bold text-nowrap" %>
+    <% 
+      mins = room.timer_duration / 60
+      secs = room.timer_duration % 60
+      dur_val = "#{mins.to_s.rjust(2, '0')}:#{secs.to_s.rjust(2, '0')}" 
+    %>
+    <%= f.text_field :duration_str, value: dur_val, class: "form-control text-center", placeholder: "e.g. 15:00", style: "max-width: 100px;" %>
+    <%= f.submit "Set", class: "btn btn-secondary btn-sm" %>
+  <% end %>
 </div>
