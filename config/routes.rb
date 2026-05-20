@@ -9,8 +9,9 @@ Rails.application.routes.draw do
       patch :update_timer
       patch :update_message
       patch :update_slide
+      patch :update_audio
     end
-    resources :media_assets, only: [:create, :destroy]
+    resources :media_assets, only: [:create, :update, :destroy]
     resources :presentations, only: [:create, :destroy]
   end
 end
