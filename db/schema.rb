@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_20_200947) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_20_215600) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -41,15 +44,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_20_200947) do
 
   create_table "media_assets", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.boolean "loop", default: false, null: false
     t.string "media_type"
-    t.integer "room_id", null: false
+    t.integer "position", default: 0
+    t.bigint "room_id", null: false
+    t.string "title"
     t.datetime "updated_at", null: false
     t.index ["room_id"], name: "index_media_assets_on_room_id"
   end
 
   create_table "presentations", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.integer "room_id", null: false
+    t.bigint "room_id", null: false
     t.string "status"
     t.datetime "updated_at", null: false
     t.index ["room_id"], name: "index_presentations_on_room_id"
@@ -57,6 +63,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_20_200947) do
 
   create_table "rooms", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.bigint "current_audio_id"
     t.integer "current_slide"
     t.string "message"
     t.string "passcode"
