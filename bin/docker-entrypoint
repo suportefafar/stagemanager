@@ -3,6 +3,13 @@
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   ./bin/rails db:prepare
+
+  # Solid Queue/Cable/Cache use dedicated schema files (db/*_schema.rb).
+  # db:prepare does not load these — do it explicitly on first boot.
+  # On subsequent boots the databases already have tables so these are no-ops.
+  ./bin/rails db:create:queue db:schema:load:queue 2>/dev/null || true
+  ./bin/rails db:create:cable db:schema:load:cable 2>/dev/null || true
+  ./bin/rails db:create:cache db:schema:load:cache 2>/dev/null || true
 fi
 
 exec "${@}"

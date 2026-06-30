@@ -14,7 +14,7 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <%= favicon_link_tag 'logo.ico' %>
+    <%= favicon_link_tag 'icon.ico' %>
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
@@ -25,7 +25,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
       <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="/">
-          <%= image_tag 'logo.png', alt: 'Logo', height: 30, class: 'me-2' %>
+          <%= image_tag 'icon.png', alt: 'Logo', height: 30, class: 'me-2' %>
           Stagemanager
         </a>
       </div>
