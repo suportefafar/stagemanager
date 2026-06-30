@@ -1,17 +1,17 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  passcode: MyString
-  timer_duration: 1
-  timer_remaining: 1
-  timer_status: MyString
-  message: MyString
+  passcode: room-alpha
+  timer_duration: 600
+  timer_remaining: 600
+  timer_status: stopped
+  message: ""
   current_slide: 1
 
 two:
-  passcode: MyString
-  timer_duration: 1
-  timer_remaining: 1
-  timer_status: MyString
-  message: MyString
+  passcode: room-beta
+  timer_duration: 300
+  timer_remaining: 150
+  timer_status: playing
+  message: "Welcome to the presentation!"
   current_slide: 1

@@ -1,9 +1,36 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
+# Slide assets for room one
+slide_one:
   room: one
-  media_type: MyString
+  media_type: image
+  position: 1
+  title: "Intro Slide"
 
-two:
-  room: two
-  media_type: MyString
+slide_two:
+  room: one
+  media_type: image
+  position: 2
+  title: "Main Content"
+
+video_one:
+  room: one
+  media_type: video
+  position: 3
+  title: "Demo Video"
+  loop: true
+
+# Audio assets for room one
+audio_one:
+  room: one
+  media_type: audio
+  position: 0
+  title: "Background Music"
+  loop: true
+
+audio_two:
+  room: one
+  media_type: audio
+  position: 0
+  title: "Applause"
+  loop: false

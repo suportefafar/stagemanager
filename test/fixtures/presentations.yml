@@ -2,8 +2,8 @@
 
 one:
   room: one
-  status: MyString
+  status: processing
 
 two:
-  room: two
-  status: MyString
+  room: one
+  status: ready
