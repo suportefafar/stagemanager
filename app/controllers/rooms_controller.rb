@@ -71,9 +71,14 @@ class RoomsController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream do
-        render turbo_stream: turbo_stream.replace("carousel_message",
-          partial: "rooms/carousel_message",
-          locals: { room: @room })
+        render turbo_stream: [
+          turbo_stream.replace("carousel_message",
+            partial: "rooms/carousel_message",
+            locals: { room: @room }),
+          turbo_stream.replace("message_form",
+            partial: "rooms/message_form",
+            locals: { room: @room })
+        ]
       end
       format.html { redirect_to manager_room_path(@room.passcode) }
     end

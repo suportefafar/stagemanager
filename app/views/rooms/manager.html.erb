@@ -32,12 +32,7 @@
         </div>
         <div class="card-body">
           <%= turbo_stream_from "room_#{@room.id}_message" %>
-          <%= form_with url: update_message_room_path(@room.passcode), method: :patch, class: "d-flex flex-column" do |f| %>
-            <div class="mb-3">
-              <%= f.text_area :message, value: @room.message, class: "form-control", rows: 3, placeholder: "Type a message to scroll across the screen..." %>
-            </div>
-            <%= f.submit "Update Message", class: "btn btn-primary" %>
-          <% end %>
+          <%= render "rooms/message_form", room: @room %>
         </div>
       </div>
     </div>

@@ -1,0 +1,9 @@
+<%= form_with url: update_message_room_path(room.passcode), method: :patch, id: "message_form", class: "d-flex flex-column" do |f| %>
+  <div class="mb-3">
+    <%= f.text_area :message, value: room.message, class: "form-control", rows: 3, placeholder: "Type a message to scroll across the screen..." %>
+  </div>
+  <div class="d-flex gap-2">
+    <%= f.submit "Update Message", class: "btn btn-primary" %>
+    <%= link_to "Clear Message", update_message_room_path(room.passcode, message: ""), data: { turbo_method: :patch }, class: "btn btn-outline-danger" %>
+  </div>
+<% end %>
