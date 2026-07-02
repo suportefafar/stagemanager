@@ -31,7 +31,7 @@ class MediaAsset < ApplicationRecord
 
   def set_position
     return if media_type == 'audio'
-    self.position ||= (room.media_assets.slides.maximum(:position) || 0) + 1
+    self.position = (room.media_assets.slides.maximum(:position) || 0) + 1
   end
 
   def set_audio_loop_default
