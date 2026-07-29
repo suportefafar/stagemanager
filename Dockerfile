@@ -17,6 +17,9 @@ WORKDIR /rails
 # Install base packages
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client && \
+    libvips_version="$(dpkg-query -W -f='${Version}\n' libvips42 libvips42t64 2>/dev/null | head -n1)" && \
+    test -n "$libvips_version" && \
+    dpkg --compare-versions "$libvips_version" ge "8.13" && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
@@ -25,7 +28,8 @@ ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development" \
-    LD_PRELOAD="/usr/local/lib/libjemalloc.so"
+    LD_PRELOAD="/usr/local/lib/libjemalloc.so" \
+    VIPS_BLOCK_UNTRUSTED="1"
 
 # Throw-away build stage to reduce size of final image
 FROM base AS build
