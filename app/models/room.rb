@@ -26,7 +26,7 @@ class Room < ApplicationRecord
   def set_defaults
     self.timer_duration ||= 600
     self.timer_remaining ||= 600
-    self.timer_status ||= 'stopped'
+    self.timer_status ||= "stopped"
     self.current_slide ||= 1
   end
 end

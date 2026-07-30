@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
-  root 'home#index'
+  root "home#index"
 
   get "up" => "rails/health#show", as: :rails_health_check
 
-  resources :rooms, param: :passcode, only: [:create] do
+  resources :rooms, param: :passcode, only: [ :create ] do
     member do
       get :manager
       get :presentation
@@ -13,7 +13,7 @@ Rails.application.routes.draw do
       patch :update_slide
       patch :update_audio
     end
-    resources :media_assets, only: [:create, :update, :destroy]
-    resources :presentations, only: [:create, :destroy]
+    resources :media_assets, only: [ :create, :update, :destroy ]
+    resources :presentations, only: [ :create, :destroy ]
   end
 end

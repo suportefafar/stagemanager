@@ -4,7 +4,7 @@ class TimerTickJob < ApplicationJob
   def perform(room_id)
     room = Room.find_by(id: room_id)
     return unless room
-    return unless room.timer_status == 'playing'
+    return unless room.timer_status == "playing"
 
     room.update_column(:timer_remaining, room.timer_remaining - 1)
     room.reload
@@ -12,11 +12,11 @@ class TimerTickJob < ApplicationJob
     # Broadcast updated state to all subscribers
     broadcast_timer(room)
 
-    if room.timer_remaining > 0 && room.timer_status == 'playing'
+    if room.timer_remaining > 0 && room.timer_status == "playing"
       TimerTickJob.set(wait: 1.second).perform_later(room_id)
     else
       # Timer finished — auto-stop
-      room.update_columns(timer_status: 'stopped')
+      room.update_columns(timer_status: "stopped")
       broadcast_timer(room)
     end
   end

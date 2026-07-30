@@ -8,6 +8,6 @@ class Presentation < ApplicationRecord
   private
 
   def set_defaults
-    self.status ||= 'processing'
+    self.status ||= "processing"
   end
 end

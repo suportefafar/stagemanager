@@ -6,7 +6,7 @@ class MediaAsset < ApplicationRecord
 
   scope :ordered, -> { order(:position) }
   scope :slides, -> { where(media_type: %w[image video]).ordered }
-  scope :audios, -> { where(media_type: 'audio').ordered }
+  scope :audios, -> { where(media_type: "audio").ordered }
 
   before_create :set_position
   before_create :set_audio_loop_default
@@ -30,11 +30,11 @@ class MediaAsset < ApplicationRecord
   private
 
   def set_position
-    return if media_type == 'audio'
+    return if media_type == "audio"
     self.position = (room.media_assets.slides.maximum(:position) || 0) + 1
   end
 
   def set_audio_loop_default
-    self.loop = true if media_type == 'audio'
+    self.loop = true if media_type == "audio"
   end
 end

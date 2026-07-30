@@ -1,5 +1,5 @@
 class RoomsController < ApplicationController
-  before_action :set_room, except: [:create]
+  before_action :set_room, except: [ :create ]
 
   def create
     @room = Room.find_or_create_by(passcode: params[:passcode])
@@ -22,20 +22,20 @@ class RoomsController < ApplicationController
   end
 
   def update_timer
-    if params[:action_type] == 'start'
-      @room.update(timer_status: 'playing')
+    if params[:action_type] == "start"
+      @room.update(timer_status: "playing")
       TimerTickJob.set(wait: 1.second).perform_later(@room.id)
-    elsif params[:action_type] == 'pause'
-      @room.update(timer_status: 'paused')
-    elsif params[:action_type] == 'stop'
-      @room.update(timer_status: 'stopped', timer_remaining: @room.timer_duration)
-    elsif params[:action_type] == 'add'
+    elsif params[:action_type] == "pause"
+      @room.update(timer_status: "paused")
+    elsif params[:action_type] == "stop"
+      @room.update(timer_status: "stopped", timer_remaining: @room.timer_duration)
+    elsif params[:action_type] == "add"
       amount = params[:amount].to_i > 0 ? params[:amount].to_i : 60
       @room.update(timer_remaining: @room.timer_remaining + amount)
-    elsif params[:action_type] == 'sub'
+    elsif params[:action_type] == "sub"
       amount = params[:amount].to_i > 0 ? params[:amount].to_i : 60
-      @room.update(timer_remaining: [@room.timer_remaining - amount, 0].max)
-    elsif params[:action_type] == 'set_duration'
+      @room.update(timer_remaining: [ @room.timer_remaining - amount, 0 ].max)
+    elsif params[:action_type] == "set_duration"
       duration_str = params[:duration_str].to_s.strip
       if duration_str.include?(":")
         minutes, seconds = duration_str.split(":")
@@ -44,7 +44,7 @@ class RoomsController < ApplicationController
         total_seconds = duration_str.to_i * 60
       end
       total_seconds = 60 if total_seconds <= 0
-      @room.update(timer_duration: total_seconds, timer_remaining: total_seconds, timer_status: 'stopped')
+      @room.update(timer_duration: total_seconds, timer_remaining: total_seconds, timer_status: "stopped")
     end
 
     @room.reload
@@ -87,13 +87,13 @@ class RoomsController < ApplicationController
   def update_slide
     if @room.total_slides > 0
       case params[:action_type]
-      when 'next'
-        new_slide = [@room.current_slide + 1, @room.total_slides].min
+      when "next"
+        new_slide = [ @room.current_slide + 1, @room.total_slides ].min
         @room.update(current_slide: new_slide)
-      when 'prev'
-        new_slide = [@room.current_slide - 1, 1].max
+      when "prev"
+        new_slide = [ @room.current_slide - 1, 1 ].max
         @room.update(current_slide: new_slide)
-      when 'goto'
+      when "goto"
         slide_num = params[:slide_number].to_i.clamp(1, @room.total_slides)
         @room.update(current_slide: slide_num)
       end
@@ -114,9 +114,9 @@ class RoomsController < ApplicationController
 
   def update_audio
     case params[:action_type]
-    when 'play'
+    when "play"
       @room.update(current_audio_id: params[:audio_id])
-    when 'stop'
+    when "stop"
       @room.update(current_audio_id: nil)
     end
 
