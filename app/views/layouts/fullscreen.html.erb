@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
   <head>
-    <title><%= content_for(:title) || "StageManager" %></title>
+    <title><%= content_for(:title) || "Exibição · StageManager" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -10,29 +10,16 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <%= favicon_link_tag 'icon.ico' %>
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag "application" %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "farmacia-ds.min", defer: true, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    
-    <style>
-      body, html {
-        height: 100%;
-        margin: 0;
-        background-color: #000;
-        color: #fff;
-        overflow: hidden;
-      }
-    </style>
   </head>
 
-  <body>
-    <%= yield %>
+  <body data-fafar-theme="institucional" class="display-page <%= content_for(:body_class) %>">
+    <a class="skip-link" href="#conteudo">Pular para a exibição</a>
+    <main id="conteudo" class="display-content" tabindex="-1">
+      <%= yield %>
+    </main>
   </body>
 </html>

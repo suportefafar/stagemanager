@@ -1,0 +1,16 @@
+<header class="topbar d-flex align-items-center gap-3 px-3 px-lg-4">
+  <button class="btn btn-outline-dark btn-icon d-xl-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#stageMenu" aria-controls="stageMenu" aria-expanded="false" aria-label="Abrir navegação">
+    <%= fafar_icon "menu", class_name: "icon-lg" %>
+  </button>
+  <div class="room-identity">
+    <%= image_tag "logo.png", alt: "", class: "topbar-brand-logo d-none d-sm-block" %>
+    <span class="room-identity-copy">
+      <small>Sala em operação</small>
+      <strong class="room-code"><%= room.passcode %></strong>
+    </span>
+  </div>
+  <%= link_to root_path, class: "btn btn-sm btn-outline-dark d-inline-flex align-items-center gap-2 ms-auto" do %>
+    <%= fafar_icon "arrow-left" %>
+    <span class="d-none d-sm-inline">Trocar sala</span>
+  <% end %>
+</header>

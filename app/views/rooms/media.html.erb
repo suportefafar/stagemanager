@@ -1,0 +1,48 @@
+<% content_for :title, "Apresentação e mídia · #{@room.passcode} · StageManager" %>
+
+<div class="app-shell">
+  <%= render "rooms/manager_navigation", room: @room, active_page: :media %>
+
+  <div class="main-column">
+    <%= render "rooms/manager_topbar", room: @room %>
+
+    <main class="page-content" id="conteudo" tabindex="-1">
+      <section aria-labelledby="page-title">
+        <nav aria-label="Caminho de navegação">
+          <ol class="breadcrumb small mb-2">
+            <li class="breadcrumb-item"><%= link_to "StageManager", root_path %></li>
+            <li class="breadcrumb-item">Sala <%= @room.passcode %></li>
+            <li class="breadcrumb-item active" aria-current="page">Apresentação e mídia</li>
+          </ol>
+        </nav>
+
+        <header class="page-header d-flex flex-column flex-lg-row align-items-lg-start justify-content-between gap-3 mb-4">
+          <div>
+            <p class="eyebrow mb-1">Conteúdo de palco</p>
+            <h1 class="h2 mb-1" id="page-title">Apresentação e mídia</h1>
+            <p class="page-subtitle">Organize slides, vídeos e trilhas de áudio da apresentação.</p>
+          </div>
+          <div class="page-actions d-flex flex-wrap gap-2">
+            <%= link_to presentation_room_path(@room.passcode), target: "_blank", rel: "noopener", class: "btn btn-brand d-inline-flex align-items-center gap-2" do %>
+              <%= fafar_icon "monitor" %>Abrir tela de apresentação
+            <% end %>
+          </div>
+        </header>
+
+        <section class="panel" aria-labelledby="media-title">
+          <header class="panel-header">
+            <div class="panel-header-title">
+              <span class="panel-header-icon"><%= fafar_icon "monitor" %></span>
+              <div><p class="eyebrow mb-1">Biblioteca da sala</p><h2 class="h5 mb-0" id="media-title">Slides e faixas de áudio</h2></div>
+            </div>
+          </header>
+          <div class="panel-body">
+            <%= render "rooms/media_panel", room: @room %>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <%= render "rooms/manager_footer" %>
+  </div>
+</div>

@@ -55,6 +55,7 @@ StageManager utilizes a monolithic architecture optimized for real-time performa
 
 *   **Presentations & Media**: Full integration for uploading, ordering, and broadcasting presentation slides to connected screens.
 *   **Media Asset Management**: Active Storage configuration for robust media handling.
+*   **Keyboard Media Shortcuts**: Allow users to map uploaded media to keyboard keys (for example, assign `exit-music.mp3` to `1`) so pressing the mapped key on the page starts playback.
 *   **Authentication & Roles**: Enhanced security beyond room passcodes for organizational event management.
 
 ---

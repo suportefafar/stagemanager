@@ -15,20 +15,26 @@
       percentage = 100
     end
 
-    if percentage > 50
-      bar_class = "bg-success"
+    bar_class = if percentage > 50
+      "bg-success"
     elsif percentage > 20
-      bar_class = "bg-warning"
+      "bg-warning"
     else
-      bar_class = "bg-danger"
+      "bg-danger"
     end
+
+    status_label = { "playing" => "Em andamento", "paused" => "Pausado", "stopped" => "Parado" }.fetch(room.timer_status, "Parado")
+    status_class = { "playing" => "status-success", "paused" => "status-warning", "stopped" => "status-neutral" }.fetch(room.timer_status, "status-neutral")
   %>
 
-  <div class="clock-text w-100 text-center">
-    <%= formatted %>
+  <div class="timer-meta">
+    <span class="status-badge <%= status_class %>"><%= status_label %></span>
+    <span class="small text-body-secondary"><%= percentage.round %>% restante</span>
   </div>
 
-  <div class="progress mt-3" style="height: 10px; border-radius: 0;">
-    <div class="progress-bar <%= bar_class %>" role="progressbar" style="width: <%= percentage %>%"></div>
+  <div class="clock-text w-100 text-center" role="timer" aria-label="Tempo restante: <%= formatted %>"><%= formatted %></div>
+
+  <div class="progress timer-progress mt-3" role="progressbar" aria-label="Progresso do cronômetro" aria-valuenow="<%= percentage.round %>" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar <%= bar_class %>" style="width: <%= percentage %>%"></div>
   </div>
 </div>

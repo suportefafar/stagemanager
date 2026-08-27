@@ -1,9 +1,26 @@
-<%= form_with url: update_message_room_path(room.passcode), method: :patch, id: "message_form", class: "d-flex flex-column" do |f| %>
-  <div class="mb-3">
-    <%= f.text_area :message, value: room.message, class: "form-control", rows: 3, placeholder: "Type a message to scroll across the screen..." %>
+<div id="message_form">
+  <div class="message-preview <%= 'is-empty' if room.message.blank? %> mb-4" aria-live="polite">
+    <% if room.message.present? %>
+      <div><p class="eyebrow mb-1">Em exibição</p><strong><%= room.message %></strong></div>
+    <% else %>
+      <div><%= fafar_icon "inbox", class_name: "mb-2" %><span class="d-block small">Nenhum recado está sendo exibido.</span></div>
+    <% end %>
   </div>
-  <div class="d-flex gap-2">
-    <%= f.submit "Update Message", class: "btn btn-primary" %>
-    <%= link_to "Clear Message", update_message_room_path(room.passcode, message: ""), data: { turbo_method: :patch }, class: "btn btn-outline-danger" %>
-  </div>
-<% end %>
+
+  <%= form_with url: update_message_room_path(room.passcode), method: :patch do |f| %>
+    <div class="mb-3">
+      <%= f.label :message, "Texto do recado", class: "form-label" %>
+      <%= f.text_area :message,
+          value: room.message,
+          class: "form-control",
+          rows: 4,
+          placeholder: "Ex.: A próxima palestra começa em 10 minutos.",
+          aria: { describedby: "message-help" } %>
+      <div class="form-text" id="message-help">O texto percorre a faixa inferior da tela do cronômetro.</div>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <%= f.submit "Atualizar recado", class: "btn btn-brand" %>
+      <%= link_to "Limpar recado", update_message_room_path(room.passcode, message: ""), data: { turbo_method: :patch, turbo_confirm: "Limpar o recado da tela?" }, class: "btn btn-outline-danger" %>
+    </div>
+  <% end %>
+</div>

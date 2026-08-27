@@ -17,7 +17,7 @@ WORKDIR /rails
 # Install base packages
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client && \
-    libvips_version="$(dpkg-query -W -f='${Version}\n' libvips42 libvips42t64 2>/dev/null | head -n1)" && \
+    libvips_version="$(dpkg-query -W -f='${db:Status-Abbrev} ${Version}\n' libvips42 libvips42t64 2>/dev/null | awk '$1 == "ii" { print $2; exit }')" && \
     test -n "$libvips_version" && \
     dpkg --compare-versions "$libvips_version" ge "8.13" && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \

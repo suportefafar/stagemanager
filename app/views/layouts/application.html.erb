@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
   <head>
-    <title><%= content_for(:title) || "Stagemanager" %></title>
+    <title><%= content_for(:title) || "StageManager · FAFAR" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Controle de palco, cronômetro e apresentações da Faculdade de Farmácia da UFMG.">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Stagemanager">
     <meta name="mobile-web-app-capable" content="yes">
@@ -11,27 +12,27 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <%= favicon_link_tag 'icon.ico' %>
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "farmacia-ds.min", defer: true, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-      <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-          <%= image_tag 'icon.png', alt: 'Logo', height: 30, class: 'me-2' %>
-          Stagemanager
-        </a>
+  <body data-fafar-theme="institucional" class="<%= content_for(:body_class) %>">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+    <% if flash.any? %>
+      <div class="flash-stack" aria-live="polite">
+        <% flash.each do |type, message| %>
+          <div class="feedback <%= type.to_s == 'alert' ? 'feedback-danger' : 'feedback-success' %>" role="status">
+            <%= fafar_icon(type.to_s == 'alert' ? 'alert' : 'check', class_name: 'mt-1') %>
+            <span><%= message %></span>
+          </div>
+        <% end %>
       </div>
-    </nav>
-    <main class="container-fluid">
-      <%= yield %>
-    </main>
+    <% end %>
+
+    <%= yield %>
   </body>
 </html>

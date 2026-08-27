@@ -1,0 +1,57 @@
+<aside class="sidebar d-none d-xl-flex flex-column" aria-label="Navegação principal">
+  <div class="brand-block p-4">
+    <%= link_to root_path, class: "brand-identity" do %>
+      <%= image_tag "logo.png", alt: "", class: "app-logo" %>
+      <span class="brand-identity-copy">
+        <span class="brand-identity-wordmark">FAFAR · UFMG</span>
+        <strong class="brand-identity-title d-block text-white">StageManager</strong>
+        <span class="brand-identity-subtitle d-block">Controle de palco</span>
+      </span>
+    <% end %>
+  </div>
+
+  <div class="sidebar-navigation-scroll">
+    <div class="stage-sidebar-section eyebrow">Funções da sala</div>
+    <nav class="sidebar-nav nav nav-pills flex-column px-2 pb-4">
+      <%= link_to manager_room_path(room.passcode),
+          class: ["nav-link", ("active" if active_page == :timer)],
+          aria: (active_page == :timer ? { current: "page" } : {}) do %>
+        <%= fafar_icon "clock" %>Timer
+      <% end %>
+      <%= link_to media_room_path(room.passcode),
+          class: ["nav-link", ("active" if active_page == :media)],
+          aria: (active_page == :media ? { current: "page" } : {}) do %>
+        <%= fafar_icon "monitor" %>Apresentação e mídia
+      <% end %>
+    </nav>
+  </div>
+
+  <div class="sidebar-footer p-3 small">
+    <span class="d-block mb-1">Código da sala</span>
+    <strong class="room-code d-block text-white"><%= room.passcode %></strong>
+  </div>
+</aside>
+
+<div class="offcanvas offcanvas-start app-navigation d-xl-none" tabindex="-1" id="stageMenu" aria-labelledby="stageMenuTitle">
+  <div class="offcanvas-header border-bottom border-secondary">
+    <div>
+      <p class="eyebrow text-white-50 mb-1">Sala <span class="room-code"><%= room.passcode %></span></p>
+      <h2 class="h5 text-white mb-0" id="stageMenuTitle">Funções da sala</h2>
+    </div>
+    <button class="btn-close btn-close-white" type="button" data-bs-dismiss="offcanvas" aria-label="Fechar navegação"></button>
+  </div>
+  <div class="offcanvas-body p-2">
+    <nav class="sidebar-nav nav nav-pills flex-column">
+      <%= link_to manager_room_path(room.passcode),
+          class: ["nav-link", ("active" if active_page == :timer)],
+          aria: (active_page == :timer ? { current: "page" } : {}) do %>
+        <%= fafar_icon "clock" %>Timer
+      <% end %>
+      <%= link_to media_room_path(room.passcode),
+          class: ["nav-link", ("active" if active_page == :media)],
+          aria: (active_page == :media ? { current: "page" } : {}) do %>
+        <%= fafar_icon "monitor" %>Apresentação e mídia
+      <% end %>
+    </nav>
+  </div>
+</div>

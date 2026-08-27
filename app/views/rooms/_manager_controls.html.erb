@@ -1,50 +1,58 @@
 <div id="manager_controls">
-  <div class="btn-group w-100 mb-3 gap-2" role="group">
-    <%= button_to update_timer_room_path(room.passcode, action_type: 'start'), method: :patch, class: "btn btn-success", disabled: room.timer_status == 'playing' do %>
-      <i class="bi bi-play-fill"></i> Start
+  <div class="timer-actions mb-4" role="group" aria-label="Ações do cronômetro">
+    <%= button_to update_timer_room_path(room.passcode, action_type: "start"), method: :patch, class: "btn btn-brand", disabled: room.timer_status == "playing" do %>
+      Iniciar
     <% end %>
 
-    <%= button_to update_timer_room_path(room.passcode, action_type: 'pause'), method: :patch, class: "btn btn-warning", disabled: room.timer_status != 'playing' do %>
-      <i class="bi bi-pause-fill"></i> Pause
+    <%= button_to update_timer_room_path(room.passcode, action_type: "pause"), method: :patch, class: "btn btn-outline-dark", disabled: room.timer_status != "playing" do %>
+      Pausar
     <% end %>
 
-    <%= button_to update_timer_room_path(room.passcode, action_type: 'stop'), method: :patch, class: "btn btn-danger", data: { turbo_confirm: "Stop and reset timer?" } do %>
-      <i class="bi bi-stop-fill"></i> Stop/Reset
+    <%= button_to update_timer_room_path(room.passcode, action_type: "stop"), method: :patch, class: "btn btn-outline-danger", data: { turbo_confirm: "Parar e reiniciar o cronômetro?" } do %>
+      Parar e reiniciar
     <% end %>
   </div>
 
-  <div class="btn-group w-100 gap-2 flex-wrap mb-4" role="group">
-    <%= button_to update_timer_room_path(room.passcode, action_type: 'sub', amount: 600), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
-      - 10
-    <% end %>
-    <%= button_to update_timer_room_path(room.passcode, action_type: 'sub', amount: 300), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
-      - 5
-    <% end %>
-    <%= button_to update_timer_room_path(room.passcode, action_type: 'sub', amount: 60), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
-      - 1 Min
-    <% end %>
-
-    <%= button_to update_timer_room_path(room.passcode, action_type: 'add', amount: 60), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
-      + 1 Min
-    <% end %>
-    <%= button_to update_timer_room_path(room.passcode, action_type: 'add', amount: 300), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
-      + 5
-    <% end %>
-    <%= button_to update_timer_room_path(room.passcode, action_type: 'add', amount: 600), method: :patch, class: "btn btn-outline-secondary flex-grow-1" do %>
-      + 10
-    <% end %>
+  <div class="mb-4">
+    <p class="form-label mb-2">Ajuste rápido</p>
+    <div class="timer-adjustments" role="group" aria-label="Ajustar tempo restante">
+      <%= button_to update_timer_room_path(room.passcode, action_type: "sub", amount: 600), method: :patch, class: "btn btn-sm btn-outline-dark" do %>
+        −10 min
+      <% end %>
+      <%= button_to update_timer_room_path(room.passcode, action_type: "sub", amount: 300), method: :patch, class: "btn btn-sm btn-outline-dark" do %>
+        −5 min
+      <% end %>
+      <%= button_to update_timer_room_path(room.passcode, action_type: "sub", amount: 60), method: :patch, class: "btn btn-sm btn-outline-dark" do %>
+        −1 min
+      <% end %>
+      <%= button_to update_timer_room_path(room.passcode, action_type: "add", amount: 60), method: :patch, class: "btn btn-sm btn-outline-dark" do %>
+        +1 min
+      <% end %>
+      <%= button_to update_timer_room_path(room.passcode, action_type: "add", amount: 300), method: :patch, class: "btn btn-sm btn-outline-dark" do %>
+        +5 min
+      <% end %>
+      <%= button_to update_timer_room_path(room.passcode, action_type: "add", amount: 600), method: :patch, class: "btn btn-sm btn-outline-dark" do %>
+        +10 min
+      <% end %>
+    </div>
   </div>
 
-  <hr>
-  
-  <%= form_with url: update_timer_room_path(room.passcode, action_type: 'set_duration'), method: :patch, class: "d-flex align-items-center gap-2 mt-3" do |f| %>
-    <%= f.label :duration_str, "Default Timer:", class: "form-label mb-0 fw-bold text-nowrap" %>
-    <% 
-      mins = room.timer_duration / 60
-      secs = room.timer_duration % 60
-      dur_val = "#{mins.to_s.rjust(2, '0')}:#{secs.to_s.rjust(2, '0')}" 
-    %>
-    <%= f.text_field :duration_str, value: dur_val, class: "form-control text-center", placeholder: "e.g. 15:00", style: "max-width: 100px;" %>
-    <%= f.submit "Set", class: "btn btn-secondary btn-sm" %>
+  <%
+    mins = room.timer_duration / 60
+    secs = room.timer_duration % 60
+    duration_value = "#{mins.to_s.rjust(2, '0')}:#{secs.to_s.rjust(2, '0')}"
+  %>
+  <%= form_with url: update_timer_room_path(room.passcode, action_type: "set_duration"), method: :patch, class: "timer-duration-form pt-3 border-top" do |f| %>
+    <div>
+      <%= f.label :duration_str, "Duração padrão", class: "form-label mb-1" %>
+      <p class="form-text mb-0" id="duration-help">Use minutos ou o formato MM:SS.</p>
+    </div>
+    <%= f.text_field :duration_str,
+        value: duration_value,
+        class: "form-control",
+        placeholder: "15:00",
+        inputmode: "numeric",
+        aria: { describedby: "duration-help" } %>
+    <%= f.submit "Definir duração", class: "btn btn-charcoal" %>
   <% end %>
 </div>

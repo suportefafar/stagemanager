@@ -1,17 +1,21 @@
-<div id="presentation_display" class="w-100 h-100 d-flex justify-content-center align-items-center">
+<div id="presentation_display" class="presentation-screen">
   <% current_asset = room.current_media_asset %>
   <% if current_asset&.file&.attached? %>
     <% if current_asset.image? %>
       <%= image_tag url_for(current_asset.file),
-          style: "max-width: 100%; max-height: 100%; object-fit: contain;" %>
+          alt: current_asset.title.presence || "Slide #{room.current_slide}" %>
     <% elsif current_asset.video? %>
       <video src="<%= url_for(current_asset.file) %>" autoplay <%= 'loop' if current_asset.loop? %>
-        style="max-width: 100%; max-height: 100%; object-fit: contain;"></video>
+        aria-label="Vídeo <%= current_asset.title.presence || room.current_slide %>"></video>
     <% end %>
   <% else %>
-    <div class="text-secondary text-center">
-      <i class="bi bi-display" style="font-size: 5rem;"></i>
-      <h3 class="mt-3">No Presentation Active</h3>
+    <div class="presentation-empty">
+      <span class="presentation-empty-icon"><%= fafar_icon "monitor" %></span>
+      <div>
+        <p class="eyebrow text-white-50 mb-1">StageManager</p>
+        <h1 class="h3 mb-2">Nenhuma apresentação ativa</h1>
+        <p class="mb-0">O conteúdo aparecerá aqui assim que for selecionado no painel da sala.</p>
+      </div>
     </div>
   <% end %>
 </div>

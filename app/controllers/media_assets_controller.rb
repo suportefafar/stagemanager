@@ -12,7 +12,7 @@ class MediaAssetsController < ApplicationController
     end
 
     broadcast_presentation_update
-    redirect_to manager_room_path(@room.passcode), notice: "#{files.size} file(s) uploaded."
+    redirect_to media_room_path(@room.passcode), notice: "#{files.size} arquivo(s) enviado(s)."
   end
 
   def update
@@ -33,7 +33,7 @@ class MediaAssetsController < ApplicationController
           partial: "rooms/media_panel",
           locals: { room: @room.reload })
       end
-      format.html { redirect_to manager_room_path(@room.passcode) }
+      format.html { redirect_to media_room_path(@room.passcode) }
     end
   end
 
@@ -70,7 +70,7 @@ class MediaAssetsController < ApplicationController
           partial: "rooms/media_panel",
           locals: { room: @room.reload })
       end
-      format.html { redirect_to manager_room_path(@room.passcode) }
+      format.html { redirect_to media_room_path(@room.passcode) }
     end
   end
 

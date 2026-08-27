@@ -1,13 +1,50 @@
-<main class="container mt-5" style="max-width: 720px;">
-  <div class="card shadow-sm">
-    <div class="card-body p-4">
-      <h2 class="card-title">Room Passcode</h2>
-      <p class="text-secondary">Insert the passcode of the room to manage or view it. If it doesn't exist, it will be created.</p>
+<% content_for :title, "Acessar sala · StageManager" %>
+<% content_for :body_class, "room-entry-page" %>
 
-      <%= form_with url: rooms_path, method: :post, class: "input-group mt-3", local: true do |f| %>
-        <%= f.text_field :passcode, class: "form-control form-control-lg", placeholder: "Enter passcode", required: true %>
-        <%= f.submit "Enter Room", class: "btn btn-primary btn-lg" %>
+<main class="auth-shell" id="conteudo" tabindex="-1">
+  <section class="auth-panel" aria-labelledby="room-entry-title">
+    <header class="auth-brand">
+      <div class="brand-identity">
+        <%= image_tag "logo.png", alt: "", class: "app-logo" %>
+        <span class="brand-identity-copy">
+          <span class="brand-identity-wordmark">Faculdade de Farmácia · UFMG</span>
+          <strong class="brand-identity-title d-block text-white">StageManager</strong>
+          <span class="brand-identity-subtitle d-block">Controle de palco e apresentações</span>
+        </span>
+      </div>
+    </header>
+
+    <div class="auth-form">
+      <p class="eyebrow mb-1">Acesso operacional</p>
+      <h1 class="h3 mb-2" id="room-entry-title">Entrar em uma sala</h1>
+      <p class="text-body-secondary mb-4">Informe o código compartilhado para abrir o painel de controle do evento.</p>
+
+      <%= form_with url: rooms_path, method: :post, local: true do |f| %>
+        <div class="mb-3">
+          <%= f.label :passcode, "Código da sala", class: "form-label field-required" %>
+          <%= f.text_field :passcode,
+              class: "form-control form-control-lg",
+              placeholder: "Ex.: auditório-01",
+              autocomplete: "off",
+              autofocus: true,
+              required: true,
+              aria: { describedby: "passcode-help" } %>
+          <div class="form-text" id="passcode-help">Se o código ainda não existir, a sala será criada automaticamente.</div>
+        </div>
+
+        <%= f.submit "Acessar painel da sala", class: "btn btn-brand btn-lg w-100" %>
       <% end %>
     </div>
-  </div>
+
+    <footer class="room-entry-meta">
+      <div class="room-entry-meta-item">
+        <%= fafar_icon "clock" %>
+        <span>Controle o cronômetro e os avisos em tempo real.</span>
+      </div>
+      <div class="room-entry-meta-item">
+        <%= fafar_icon "monitor" %>
+        <span>Abra as saídas de palco em telas independentes.</span>
+      </div>
+    </footer>
+  </section>
 </main>

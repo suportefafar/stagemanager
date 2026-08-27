@@ -15,7 +15,7 @@ class MediaAssetsControllerTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_redirected_to manager_room_path(@room.passcode)
+    assert_redirected_to media_room_path(@room.passcode)
     follow_redirect!
     assert_response :success
 
@@ -109,7 +109,7 @@ class MediaAssetsControllerTest < ActionDispatch::IntegrationTest
       delete room_media_asset_url(@room.passcode, asset)
     end
 
-    assert_redirected_to manager_room_path(@room.passcode)
+    assert_redirected_to media_room_path(@room.passcode)
   end
 
   test "destroy reorders remaining slides" do

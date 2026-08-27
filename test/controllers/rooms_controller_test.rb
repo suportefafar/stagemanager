@@ -34,9 +34,19 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#timer_display"
   end
 
-  test "manager page contains media panel" do
+  test "manager uses the FAFAR application shell" do
     get manager_room_url(@room.passcode)
-    assert_select "#media_panel"
+    assert_select "body[data-fafar-theme='institucional']"
+    assert_select ".app-shell"
+    assert_select ".sidebar"
+    assert_select "main.page-content#conteudo"
+    assert_select ".sidebar a.nav-link.active[href=?]", manager_room_path(@room.passcode), text: /Timer/
+    assert_select ".sidebar a.nav-link[href=?]", media_room_path(@room.passcode), text: /Apresentação e mídia/
+  end
+
+  test "manager page does not contain media controls" do
+    get manager_room_url(@room.passcode)
+    assert_select "#media_panel", count: 0
   end
 
   test "manager page contains message form" do
@@ -49,6 +59,25 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  # ── MEDIA MANAGER ───────────────────────────────────────────────
+  test "should get media manager" do
+    get media_room_url(@room.passcode)
+    assert_response :success
+    assert_select "#media_panel"
+    assert_select "#manager_controls", count: 0
+  end
+
+  test "media manager marks media navigation as active" do
+    get media_room_url(@room.passcode)
+    assert_select ".sidebar a.nav-link.active[href=?]", media_room_path(@room.passcode), text: /Apresentação e mídia/
+    assert_select ".sidebar a.nav-link[href=?]", manager_room_path(@room.passcode), text: /Timer/
+  end
+
+  test "media manager with invalid passcode returns 404" do
+    get media_room_url("nonexistent-room")
+    assert_response :not_found
+  end
+
   # ── TIMER VIEW ──────────────────────────────────────────────────
   test "should get timer" do
     get timer_room_url(@room.passcode)
@@ -57,6 +86,8 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
 
   test "timer uses fullscreen layout" do
     get timer_room_url(@room.passcode)
+    assert_select "body.display-page.timer-display-page"
+    assert_select "main.display-content#conteudo"
     assert_select ".clock-text"
   end
 
@@ -179,6 +210,13 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "update_message html redirects to timer manager" do
+    patch update_message_room_url(@room.passcode),
+      params: { message: "Test" },
+      headers: { "Accept" => "text/html" }
+    assert_redirected_to manager_room_path(@room.passcode)
+  end
+
   # ── UPDATE SLIDE ────────────────────────────────────────────────
   test "update_slide next increments current_slide" do
     @room.update!(current_slide: 1)
@@ -230,6 +268,13 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, room.current_slide
   end
 
+  test "update_slide html redirects to media manager" do
+    patch update_slide_room_url(@room.passcode),
+      params: { action_type: "next" },
+      headers: { "Accept" => "text/html" }
+    assert_redirected_to media_room_path(@room.passcode)
+  end
+
   # ── UPDATE AUDIO ────────────────────────────────────────────────
   test "update_audio play sets current_audio_id" do
     audio = media_assets(:audio_one)
@@ -244,5 +289,12 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     patch update_audio_room_url(@room.passcode), params: { action_type: "stop" }
     @room.reload
     assert_nil @room.current_audio_id
+  end
+
+  test "update_audio html redirects to media manager" do
+    patch update_audio_room_url(@room.passcode),
+      params: { action_type: "stop" },
+      headers: { "Accept" => "text/html" }
+    assert_redirected_to media_room_path(@room.passcode)
   end
 end

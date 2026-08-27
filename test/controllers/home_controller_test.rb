@@ -13,4 +13,11 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
       assert_select "input[type='submit']"
     end
   end
+
+  test "index uses the FAFAR authentication shell" do
+    get root_url
+    assert_select "body[data-fafar-theme='institucional'].room-entry-page"
+    assert_select "main.auth-shell#conteudo"
+    assert_select ".auth-panel"
+  end
 end

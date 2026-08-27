@@ -1,218 +1,238 @@
 <div id="media_panel">
-  <%# Row 1: Navigation/Preview and Upload aside %>
-  <div class="row mb-4">
-    <%# Navigation & Preview %>
-    <div class="col-md-8">
-      <h6 class="fw-bold mb-3"><i class="bi bi-easel"></i> Navigation & Preview</h6>
-      <% if room.total_slides > 0 %>
-        <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
-          <%= button_to update_slide_room_path(room.passcode, action_type: 'prev'),
-              method: :patch, class: "btn btn-outline-dark",
+  <div class="media-workspace mb-4">
+    <section aria-labelledby="preview-title">
+      <div class="d-flex align-items-end justify-content-between gap-3 mb-3">
+        <div>
+          <p class="eyebrow mb-1">Saída de apresentação</p>
+          <h3 class="h6 mb-0" id="preview-title">Navegação e prévia</h3>
+        </div>
+        <% if room.total_slides.positive? %>
+          <span class="status-badge status-info">Slide <%= room.current_slide %> de <%= room.total_slides %></span>
+        <% end %>
+      </div>
+
+      <% if room.total_slides.positive? %>
+        <div class="media-navigation mb-3" aria-label="Navegar pelos slides">
+          <%= button_to update_slide_room_path(room.passcode, action_type: "prev"),
+              method: :patch,
+              class: "btn btn-outline-dark d-inline-flex align-items-center gap-2",
               disabled: room.current_slide <= 1 do %>
-            <i class="bi bi-chevron-left"></i> Previous
+            <%= fafar_icon "arrow-left" %>Anterior
           <% end %>
-          <span class="fw-bold fs-5"><%= room.current_slide %> / <%= room.total_slides %></span>
-          <%= button_to update_slide_room_path(room.passcode, action_type: 'next'),
-              method: :patch, class: "btn btn-outline-dark",
+          <span class="media-counter" aria-live="polite"><%= room.current_slide %> / <%= room.total_slides %></span>
+          <%= button_to update_slide_room_path(room.passcode, action_type: "next"),
+              method: :patch,
+              class: "btn btn-outline-dark d-inline-flex align-items-center gap-2",
               disabled: room.current_slide >= room.total_slides do %>
-            Next <i class="bi bi-chevron-right"></i>
+            Próximo<%= fafar_icon "arrow-right" %>
           <% end %>
         </div>
 
-        <%# Preview Frame %>
-        <div class="bg-black rounded overflow-hidden text-center mx-auto mb-3" style="aspect-ratio: 16/9; max-width: 100%; max-height: 320px;">
+        <div class="media-preview-frame">
           <% current_asset = room.current_media_asset %>
-          <% if current_asset&.file&.attached? && current_asset&.image? %>
-            <%= image_tag url_for(current_asset.file),
-                style: "width: 100%; height: 100%; object-fit: contain;",
-                class: "rounded" %>
-          <% elsif current_asset&.file&.attached? && current_asset&.video? %>
-            <video src="<%= url_for(current_asset.file) %>" muted autoplay loop
-              style="width: 100%; height: 100%; object-fit: contain;" class="rounded"></video>
+          <% if current_asset&.file&.attached? && current_asset.image? %>
+            <%= image_tag url_for(current_asset.file), alt: current_asset.title.presence || "Prévia do slide #{room.current_slide}" %>
+          <% elsif current_asset&.file&.attached? && current_asset.video? %>
+            <video src="<%= url_for(current_asset.file) %>" muted autoplay <%= "loop" if current_asset.loop? %> aria-label="Prévia do vídeo <%= current_asset.title.presence || room.current_slide %>"></video>
           <% else %>
-            <div class="d-flex align-items-center justify-content-center h-100 text-secondary">
-              <i class="bi bi-display" style="font-size: 2rem;"></i>
+            <div class="media-preview-empty">
+              <%= fafar_icon "monitor" %>
+              <span>Não foi possível gerar a prévia deste item.</span>
             </div>
           <% end %>
         </div>
-
-        <%# Now Playing Audio Indicator %>
-        <% if room.current_audio %>
-          <div class="mt-2 p-2 bg-success bg-opacity-10 border border-success border-opacity-25 rounded d-flex align-items-center gap-2 text-success small">
-            <i class="bi bi-music-note-beamed"></i>
-            <span>Now playing: <strong><%= room.current_audio.title.presence || room.current_audio.file.filename %></strong></span>
-            <%= button_to update_audio_room_path(room.passcode, action_type: 'stop'),
-                method: :patch, class: "btn btn-sm btn-outline-warning p-0 px-2 ms-auto" do %>
-              <i class="bi bi-stop-fill"></i> Stop Audio
-            <% end %>
-          </div>
-        <% end %>
       <% else %>
-        <div class="text-center text-muted py-5 bg-light rounded">
-          <i class="bi bi-easel" style="font-size: 2.5rem;"></i>
-          <p class="mt-2 mb-0 small">Upload slides to activate navigation and preview</p>
+        <div class="media-preview-frame">
+          <div class="media-preview-empty">
+            <%= fafar_icon "monitor" %>
+            <strong class="text-white">Nenhum slide carregado</strong>
+            <span class="small">Envie uma imagem ou um vídeo para iniciar a apresentação.</span>
+          </div>
         </div>
       <% end %>
-    </div>
 
-    <%# Upload Section %>
-    <div class="col-md-4">
-      <h6 class="fw-bold mb-3"><i class="bi bi-cloud-upload"></i> Upload Media</h6>
-      <div class="card bg-light border-0 shadow-none">
-        <div class="card-body p-3">
-          <%= form_with url: room_media_assets_path(room.passcode), method: :post,
-              multipart: true, class: "mb-0" do |f| %>
-            <div class="mb-3">
-              <%= f.file_field :files, multiple: true, accept: "image/*,video/*,audio/*",
-                  class: "form-control", name: "media_asset[files][]" %>
-            </div>
-            <small class="text-muted d-block mb-3">
-              <i class="bi bi-info-circle"></i> Upload images/videos for slides, or audio files for background music.
-            </small>
-            <%= f.submit "Upload Files", class: "btn btn-info text-white w-100 fw-semibold" %>
-          <% end %>
+      <% if room.current_audio %>
+        <div class="feedback feedback-success mt-3" role="status">
+          <%= fafar_icon "check", class_name: "mt-1" %>
+          <div class="min-w-0">
+            <strong class="d-block">Áudio em reprodução</strong>
+            <span class="small"><%= room.current_audio.title.presence || room.current_audio.file.filename %></span>
+          </div>
+          <%= button_to "Parar áudio",
+              update_audio_room_path(room.passcode, action_type: "stop"),
+              method: :patch,
+              class: "btn btn-sm btn-outline-dark ms-auto" %>
         </div>
-      </div>
-    </div>
+      <% end %>
+    </section>
+
+    <aside class="upload-zone" aria-labelledby="upload-title">
+      <p class="eyebrow mb-1">Adicionar conteúdo</p>
+      <h3 class="h6 mb-2" id="upload-title">Enviar arquivos</h3>
+      <p class="small text-body-secondary mb-4">Imagens e vídeos entram na sequência de slides. Arquivos de áudio ficam disponíveis como trilha.</p>
+
+      <%= form_with url: room_media_assets_path(room.passcode), method: :post, multipart: true do |f| %>
+        <div class="mb-3">
+          <%= f.label :files, "Arquivos de mídia", class: "form-label field-required" %>
+          <%= f.file_field :files,
+              multiple: true,
+              accept: "image/*,video/*,audio/*",
+              class: "form-control",
+              name: "media_asset[files][]",
+              required: true,
+              aria: { describedby: "media-help" } %>
+          <div class="form-text" id="media-help">Você pode selecionar vários arquivos de uma vez.</div>
+        </div>
+        <%= f.submit "Enviar arquivos", class: "btn btn-brand w-100" %>
+      <% end %>
+    </aside>
   </div>
 
-  <hr class="my-4">
+  <div class="media-collections">
+    <section class="panel shadow-none" aria-labelledby="slides-title">
+      <header class="panel-header d-flex align-items-center justify-content-between gap-2">
+        <div><p class="eyebrow mb-1">Sequência visual</p><h3 class="h6 mb-0" id="slides-title">Slides</h3></div>
+        <span class="counter" aria-label="<%= room.total_slides %> slides"><%= room.total_slides %></span>
+      </header>
 
-  <%# Row 2: Slides and Audios Lists %>
-  <div class="row">
-    <%# Slide List (images & videos only) %>
-    <div class="col-md-6 mb-4 mb-md-0">
-      <h6 class="fw-bold mb-3"><i class="bi bi-collection"></i> Slides (<%= room.total_slides %>)</h6>
-      <div class="slide-list border rounded p-2 bg-light bg-opacity-50" style="max-height: 350px; overflow-y: auto;">
+      <ol class="media-list">
         <% room.media_assets.slides.each_with_index do |asset, index| %>
-          <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded slide-item bg-white shadow-sm border
-            <%= 'border-primary border-opacity-70 bg-primary bg-opacity-10' if index + 1 == room.current_slide %>">
-            <span class="badge bg-secondary"><%= index + 1 %></span>
-            
-            <% if asset.image? %>
-              <%= image_tag url_for(asset.file), class: "rounded border",
-                  style: "width: 48px; height: 36px; object-fit: cover;" %>
-            <% elsif asset.video? %>
-              <div class="bg-dark rounded d-flex align-items-center justify-content-center border"
-                   style="width: 48px; height: 36px;">
-                <i class="bi bi-camera-video text-info"></i>
-              </div>
-            <% end %>
+          <li class="media-item <%= 'is-active' if index + 1 == room.current_slide %>" data-controller="inline-edit">
+            <span class="media-position" aria-label="Posição <%= index + 1 %>"><%= index + 1 %></span>
 
-            <span class="text-truncate flex-grow-1 small slide-name-display fw-medium"
-                  onclick="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                  style="cursor: pointer;" title="Click to rename">
-              <%= asset.title.presence || asset.file.filename %>
+            <span class="media-thumb" aria-hidden="true">
+              <% if asset.image? %>
+                <%= image_tag url_for(asset.file), alt: "" %>
+              <% else %>
+                <%= fafar_icon "monitor" %>
+              <% end %>
             </span>
-            <%= form_with url: room_media_asset_path(room.passcode, asset), method: :patch,
-                class: "flex-grow-1", style: "display: none;" do |f| %>
-              <%= f.text_field :title, value: asset.title.presence || asset.file.filename.to_s.sub(/\.[^.]+$/, ''),
-                  class: "form-control form-control-sm", name: "media_asset[title]",
-                  onblur: "this.closest('form').requestSubmit()",
-                  onkeydown: "if(event.key==='Enter'){event.preventDefault();this.closest('form').requestSubmit()}" %>
+
+            <span class="media-item-copy" data-inline-edit-target="label">
+              <strong class="media-item-title" title="<%= asset.title.presence || asset.file.filename %>"><%= asset.title.presence || asset.file.filename %></strong>
+              <span class="media-item-type"><%= asset.image? ? "Imagem" : "Vídeo" %><%= " · em repetição" if asset.video? && asset.loop? %></span>
+            </span>
+
+            <button class="btn btn-sm btn-icon btn-outline-dark" type="button" title="Renomear" aria-label="Renomear <%= asset.title.presence || asset.file.filename %>" data-inline-edit-target="trigger" data-action="inline-edit#open">
+              <%= fafar_icon "edit" %>
+            </button>
+
+            <%= form_with url: room_media_asset_path(room.passcode, asset), method: :patch, class: "media-inline-form d-none", data: { inline_edit_target: "form" } do |f| %>
+              <%= f.label :title, "Novo nome", class: "visually-hidden" %>
+              <%= f.text_field :title,
+                  value: asset.title.presence || asset.file.filename.to_s.sub(/\.[^.]+$/, ""),
+                  class: "form-control form-control-sm",
+                  name: "media_asset[title]",
+                  data: { inline_edit_target: "input", action: "blur->inline-edit#submit keydown->inline-edit#keydown" } %>
             <% end %>
 
-            <div class="d-flex gap-1">
+            <div class="media-item-actions">
               <% if asset.video? %>
-                <%= button_to room_media_asset_path(room.passcode, asset),
+                <%= button_to asset.loop? ? "Repetindo" : "Repetir",
+                    room_media_asset_path(room.passcode, asset),
                     method: :patch,
                     params: { media_asset: { loop: !asset.loop } },
-                    class: "btn btn-sm #{asset.loop ? 'btn-info text-white' : 'btn-outline-secondary'} p-0 px-2",
-                    title: asset.loop ? "Disable repeat" : "Enable repeat" do %>
-                  <i class="bi bi-repeat"></i>
-                <% end %>
+                    class: "btn btn-sm #{asset.loop? ? 'btn-charcoal' : 'btn-outline-dark'}",
+                    title: asset.loop? ? "Desativar repetição" : "Ativar repetição" %>
               <% end %>
-              <%= button_to update_slide_room_path(room.passcode, action_type: 'goto', slide_number: index + 1),
-                  method: :patch, class: "btn btn-sm btn-outline-primary p-0 px-2",
-                  title: "Show this slide" do %>
-                <i class="bi bi-eye"></i> Show
-              <% end %>
-              <%= button_to room_media_asset_path(room.passcode, asset), method: :delete,
-                  class: "btn btn-sm btn-outline-danger p-0 px-2",
-                  data: { turbo_confirm: "Remove this slide?" },
-                  title: "Delete" do %>
-                <i class="bi bi-trash"></i>
+              <%= button_to "Exibir",
+                  update_slide_room_path(room.passcode, action_type: "goto", slide_number: index + 1),
+                  method: :patch,
+                  class: "btn btn-sm #{index + 1 == room.current_slide ? 'btn-brand' : 'btn-outline-primary'}",
+                  disabled: index + 1 == room.current_slide %>
+              <%= button_to room_media_asset_path(room.passcode, asset),
+                  method: :delete,
+                  class: "btn btn-sm btn-icon btn-outline-danger",
+                  data: { turbo_confirm: "Remover este slide?" },
+                  title: "Excluir",
+                  aria: { label: "Excluir #{asset.title.presence || asset.file.filename}" } do %>
+                <%= fafar_icon "trash" %>
               <% end %>
             </div>
-          </div>
+          </li>
         <% end %>
+
         <% if room.media_assets.slides.empty? %>
-          <div class="text-center text-muted py-4">
-            <i class="bi bi-image" style="font-size: 1.8rem;"></i>
-            <p class="mt-2 mb-0 small">No slides uploaded yet.</p>
-          </div>
+          <li class="media-preview-empty py-4 text-body-secondary">
+            <%= fafar_icon "inbox" %>
+            <span class="small">Nenhum slide foi enviado.</span>
+          </li>
         <% end %>
-      </div>
-    </div>
+      </ol>
+    </section>
 
-    <%# Audio List %>
-    <div class="col-md-6">
-      <% audios = room.media_assets.audios %>
-      <h6 class="fw-bold mb-3"><i class="bi bi-music-note-beamed"></i> Audio Tracklist (<%= audios.size %>)</h6>
-      <div class="audio-list border rounded p-2 bg-light bg-opacity-50" style="max-height: 350px; overflow-y: auto;">
+    <% audios = room.media_assets.audios %>
+    <section class="panel shadow-none" aria-labelledby="audios-title">
+      <header class="panel-header d-flex align-items-center justify-content-between gap-2">
+        <div><p class="eyebrow mb-1">Trilha sonora</p><h3 class="h6 mb-0" id="audios-title">Arquivos de áudio</h3></div>
+        <span class="counter" aria-label="<%= audios.size %> arquivos de áudio"><%= audios.size %></span>
+      </header>
+
+      <ul class="media-list list-unstyled">
         <% audios.each do |asset| %>
-          <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded bg-white shadow-sm border
-            <%= 'border-success border-opacity-70 bg-success bg-opacity-10' if room.current_audio_id == asset.id %>">
-            <div class="bg-dark rounded d-flex align-items-center justify-content-center border"
-                 style="width: 36px; height: 36px;">
-              <i class="bi bi-music-note text-success"></i>
-            </div>
+          <li class="media-item <%= 'is-active' if room.current_audio_id == asset.id %>" data-controller="inline-edit">
+            <span class="media-thumb media-thumb--audio" aria-hidden="true"><%= fafar_icon "file" %></span>
 
-            <span class="text-truncate flex-grow-1 small slide-name-display fw-medium"
-                  onclick="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                  style="cursor: pointer;" title="Click to rename">
-              <%= asset.title.presence || asset.file.filename %>
+            <span class="media-item-copy" data-inline-edit-target="label">
+              <strong class="media-item-title" title="<%= asset.title.presence || asset.file.filename %>"><%= asset.title.presence || asset.file.filename %></strong>
+              <span class="media-item-type">Áudio<%= " · em repetição" if asset.loop? %></span>
             </span>
-            <%= form_with url: room_media_asset_path(room.passcode, asset), method: :patch,
-                class: "flex-grow-1", style: "display: none;" do |f| %>
-              <%= f.text_field :title, value: asset.title.presence || asset.file.filename.to_s.sub(/\.[^.]+$/, ''),
-                  class: "form-control form-control-sm", name: "media_asset[title]",
-                  onblur: "this.closest('form').requestSubmit()",
-                  onkeydown: "if(event.key==='Enter'){event.preventDefault();this.closest('form').requestSubmit()}" %>
+
+            <button class="btn btn-sm btn-icon btn-outline-dark" type="button" title="Renomear" aria-label="Renomear <%= asset.title.presence || asset.file.filename %>" data-inline-edit-target="trigger" data-action="inline-edit#open">
+              <%= fafar_icon "edit" %>
+            </button>
+
+            <%= form_with url: room_media_asset_path(room.passcode, asset), method: :patch, class: "media-inline-form d-none", data: { inline_edit_target: "form" } do |f| %>
+              <%= f.label :title, "Novo nome", class: "visually-hidden" %>
+              <%= f.text_field :title,
+                  value: asset.title.presence || asset.file.filename.to_s.sub(/\.[^.]+$/, ""),
+                  class: "form-control form-control-sm",
+                  name: "media_asset[title]",
+                  data: { inline_edit_target: "input", action: "blur->inline-edit#submit keydown->inline-edit#keydown" } %>
             <% end %>
 
-            <div class="d-flex gap-1">
-              <%= button_to room_media_asset_path(room.passcode, asset),
+            <div class="media-item-actions">
+              <%= button_to asset.loop? ? "Repetindo" : "Repetir",
+                  room_media_asset_path(room.passcode, asset),
                   method: :patch,
                   params: { media_asset: { loop: !asset.loop } },
-                  class: "btn btn-sm #{asset.loop ? 'btn-info text-white' : 'btn-outline-secondary'} p-0 px-2",
-                  title: asset.loop ? "Disable repeat" : "Enable repeat" do %>
-                <i class="bi bi-repeat"></i>
-              <% end %>
+                  class: "btn btn-sm #{asset.loop? ? 'btn-charcoal' : 'btn-outline-dark'}",
+                  title: asset.loop? ? "Desativar repetição" : "Ativar repetição" %>
+
               <% if room.current_audio_id == asset.id %>
-                <%= button_to update_audio_room_path(room.passcode, action_type: 'stop'),
-                    method: :patch, class: "btn btn-sm btn-outline-warning p-0 px-2",
-                    title: "Stop audio" do %>
-                  <i class="bi bi-stop-fill"></i> Stop
-                <% end %>
+                <%= button_to "Parar", update_audio_room_path(room.passcode, action_type: "stop"), method: :patch, class: "btn btn-sm btn-outline-danger" %>
               <% else %>
                 <%
-                  confirm_msg = room.video_playing? ?
-                    "A video is currently playing on the presentation screen. Playing music will overlap with the video's audio. Continue?" : nil
+                  confirm_message = if room.video_playing?
+                    "Há um vídeo em reprodução. O áudio pode se sobrepor ao som do vídeo. Continuar?"
+                  end
                 %>
-                <%= button_to update_audio_room_path(room.passcode, action_type: 'play', audio_id: asset.id),
-                    method: :patch, class: "btn btn-sm btn-outline-success p-0 px-2",
-                    title: "Play audio",
-                    data: confirm_msg ? { turbo_confirm: confirm_msg } : {} do %>
-                  <i class="bi bi-play-fill"></i> Play
-                <% end %>
+                <%= button_to "Reproduzir",
+                    update_audio_room_path(room.passcode, action_type: "play", audio_id: asset.id),
+                    method: :patch,
+                    class: "btn btn-sm btn-outline-primary",
+                    data: confirm_message ? { turbo_confirm: confirm_message } : {} %>
               <% end %>
-              <%= button_to room_media_asset_path(room.passcode, asset), method: :delete,
-                  class: "btn btn-sm btn-outline-danger p-0 px-2",
-                  data: { turbo_confirm: "Remove this audio?" },
-                  title: "Delete" do %>
-                <i class="bi bi-trash"></i>
+
+              <%= button_to room_media_asset_path(room.passcode, asset),
+                  method: :delete,
+                  class: "btn btn-sm btn-icon btn-outline-danger",
+                  data: { turbo_confirm: "Remover este áudio?" },
+                  title: "Excluir",
+                  aria: { label: "Excluir #{asset.title.presence || asset.file.filename}" } do %>
+                <%= fafar_icon "trash" %>
               <% end %>
             </div>
-          </div>
+          </li>
         <% end %>
+
         <% if audios.empty? %>
-          <div class="text-center text-muted py-4">
-            <i class="bi bi-music-note" style="font-size: 1.8rem;"></i>
-            <p class="mt-2 mb-0 small">No audio files uploaded yet.</p>
-          </div>
+          <li class="media-preview-empty py-4 text-body-secondary">
+            <%= fafar_icon "inbox" %>
+            <span class="small">Nenhuma faixa de áudio foi enviada.</span>
+          </li>
         <% end %>
-      </div>
-    </div>
+      </ul>
+    </section>
   </div>
 </div>

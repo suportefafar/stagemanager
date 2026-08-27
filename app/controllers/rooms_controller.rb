@@ -13,6 +13,9 @@ class RoomsController < ApplicationController
   def manager
   end
 
+  def media
+  end
+
   def timer
     render layout: "fullscreen"
   end
@@ -108,7 +111,7 @@ class RoomsController < ApplicationController
           partial: "rooms/media_panel",
           locals: { room: @room })
       end
-      format.html { redirect_to manager_room_path(@room.passcode) }
+      format.html { redirect_to media_room_path(@room.passcode) }
     end
   end
 
@@ -129,7 +132,7 @@ class RoomsController < ApplicationController
           partial: "rooms/media_panel",
           locals: { room: @room })
       end
-      format.html { redirect_to manager_room_path(@room.passcode) }
+      format.html { redirect_to media_room_path(@room.passcode) }
     end
   end
 

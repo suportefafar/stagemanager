@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :rooms, param: :passcode, only: [ :create ] do
     member do
       get :manager
+      get :media
       get :presentation
       get :timer
       patch :update_timer

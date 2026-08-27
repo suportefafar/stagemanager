@@ -1,7 +1,8 @@
 <%= turbo_stream_from "room_#{@room.id}_presentation" %>
 
-<div class="h-100 d-flex flex-column justify-content-center align-items-center bg-black">
-  <%= render "rooms/presentation_display", room: @room %>
-</div>
+<% content_for :title, "Apresentação · #{@room.passcode} · StageManager" %>
+<% content_for :body_class, "presentation-display-page" %>
+
+<%= render "rooms/presentation_display", room: @room %>
 
 <%= render "rooms/audio_player", room: @room %>

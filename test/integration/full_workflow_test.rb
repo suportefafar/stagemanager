@@ -31,7 +31,7 @@ class FullWorkflowTest < ActionDispatch::IntegrationTest
         media_asset: { files: [ file1, file2 ] }
       }
     end
-    assert_redirected_to manager_room_path(room.passcode)
+    assert_redirected_to media_room_path(room.passcode)
 
     assert_equal 2, room.total_slides
     assert_equal "image", room.media_assets.slides.first.media_type

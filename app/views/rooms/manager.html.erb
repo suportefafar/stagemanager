@@ -1,53 +1,67 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Room: <%= @room.passcode %></h2>
-    <div>
-      <%= link_to "Launch Timer Screen", timer_room_path(@room.passcode), target: "_blank", class: "btn btn-outline-dark" %>
-      <%= link_to "Launch Presentation", presentation_room_path(@room.passcode), target: "_blank", class: "btn btn-outline-info" %>
-    </div>
-  </div>
+<% content_for :title, "Timer · #{@room.passcode} · StageManager" %>
 
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white">
-          <h5 class="mb-0">Timer Controls</h5>
-        </div>
-        <div class="card-body text-center">
-          <%= turbo_stream_from "room_#{@room.id}_timer" %>
+<div class="app-shell">
+  <%= render "rooms/manager_navigation", room: @room, active_page: :timer %>
 
-          <div class="mb-4 bg-light rounded p-4" style="height: 150px; position: relative; overflow: hidden;">
-            <%= render "rooms/timer_display", room: @room %>
+  <div class="main-column">
+    <%= render "rooms/manager_topbar", room: @room %>
+
+    <main class="page-content" id="conteudo" tabindex="-1">
+      <section aria-labelledby="page-title">
+        <nav aria-label="Caminho de navegação">
+          <ol class="breadcrumb small mb-2">
+            <li class="breadcrumb-item"><%= link_to "StageManager", root_path %></li>
+            <li class="breadcrumb-item">Sala <%= @room.passcode %></li>
+            <li class="breadcrumb-item active" aria-current="page">Timer</li>
+          </ol>
+        </nav>
+
+        <header class="page-header d-flex flex-column flex-lg-row align-items-lg-start justify-content-between gap-3 mb-4">
+          <div>
+            <p class="eyebrow mb-1">Timer com mensagem para usuário</p>
+            <h1 class="h2 mb-1" id="page-title">Timer</h1>
+            <p class="page-subtitle">Controle o tempo de palco e a mensagem exibida para o público.</p>
           </div>
+          <div class="page-actions d-flex flex-wrap gap-2">
+            <%= link_to timer_room_path(@room.passcode), target: "_blank", rel: "noopener", class: "btn btn-brand d-inline-flex align-items-center gap-2" do %>
+              <%= fafar_icon "clock" %>Abrir tela do timer
+            <% end %>
+          </div>
+        </header>
 
-          <%= render "rooms/manager_controls", room: @room %>
-        </div>
-      </div>
-    </div>
+        <div class="stage-grid">
+          <section class="panel" id="cronometro" aria-labelledby="timer-title">
+            <header class="panel-header">
+              <div class="panel-header-title">
+                <span class="panel-header-icon"><%= fafar_icon "clock" %></span>
+                <div><p class="eyebrow mb-1">Tempo de palco</p><h2 class="h5 mb-0" id="timer-title">Cronômetro</h2></div>
+              </div>
+            </header>
+            <div class="panel-body">
+              <%= turbo_stream_from "room_#{@room.id}_timer" %>
+              <div class="timer-preview mb-4">
+                <%= render "rooms/timer_display", room: @room %>
+              </div>
+              <%= render "rooms/manager_controls", room: @room %>
+            </div>
+          </section>
 
-    <div class="col-md-6">
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-secondary text-white">
-          <h5 class="mb-0">Carousel Message</h5>
+          <section class="panel" id="recado" aria-labelledby="message-title">
+            <header class="panel-header">
+              <div class="panel-header-title">
+                <span class="panel-header-icon"><%= fafar_icon "info" %></span>
+                <div><p class="eyebrow mb-1">Faixa da tela</p><h2 class="h5 mb-0" id="message-title">Mensagem para o usuário</h2></div>
+              </div>
+            </header>
+            <div class="panel-body">
+              <%= turbo_stream_from "room_#{@room.id}_message" %>
+              <%= render "rooms/message_form", room: @room %>
+            </div>
+          </section>
         </div>
-        <div class="card-body">
-          <%= turbo_stream_from "room_#{@room.id}_message" %>
-          <%= render "rooms/message_form", room: @room %>
-        </div>
-      </div>
-    </div>
-  </div>
+      </section>
+    </main>
 
-  <div class="row">
-    <div class="col-12">
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-info text-white">
-          <h5 class="mb-0"><i class="bi bi-easel"></i> Presentations & Media</h5>
-        </div>
-        <div class="card-body">
-          <%= render "rooms/media_panel", room: @room %>
-        </div>
-      </div>
-    </div>
+    <%= render "rooms/manager_footer" %>
   </div>
 </div>
