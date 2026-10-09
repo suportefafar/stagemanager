@@ -21,10 +21,13 @@ production:
     database: <%= ENV.fetch("STAGEMANAGER_DB_NAME") { "stagemanager_production" } %>
   cache:
     <<: *production_db
+    migrations_paths: db/cache_migrate
     database: <%= ENV.fetch("STAGEMANAGER_CACHE_DB_NAME") { ENV.fetch("STAGEMANAGER_DB_NAME", "stagemanager_production") + "_cache" } %>
   queue:
     <<: *production_db
+    migrations_paths: db/queue_migrate
     database: <%= ENV.fetch("STAGEMANAGER_QUEUE_DB_NAME") { ENV.fetch("STAGEMANAGER_DB_NAME", "stagemanager_production") + "_queue" } %>
   cable:
     <<: *production_db
+    migrations_paths: db/cable_migrate
     database: <%= ENV.fetch("STAGEMANAGER_CABLE_DB_NAME") { ENV.fetch("STAGEMANAGER_DB_NAME", "stagemanager_production") + "_cable" } %>
